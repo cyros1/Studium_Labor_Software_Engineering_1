@@ -3,7 +3,59 @@
 ## Aufgabe 1
 
 ### a & b)
-*siehe AccountView.java*
+```java
+public class AccountView {
+
+    public static final int threshold = 1000;
+
+    public void showAccount(User user) {
+
+        printHeader();
+
+        int result = getResult(user);
+
+        extracted(user);
+
+        printStats(user, result);
+
+        showIfHigh(result);
+    }
+    //zeigt ob ein nutzer die activity oft nutzt
+    private void showIfHigh(int result) {
+        if (result > threshold) {
+            System.out.println("High activity user");
+        }
+    }
+    //zeigt Nutzerstatisken
+    private void printStats(User user, int result) {
+        System.out.println("Name \t\t" + user.getName());
+        System.out.println("Points \t\t" + result);
+        System.out.println("Last viewed \t" +
+                user.getLastViewed());
+    }
+    //zeigt Header
+    private void printHeader() {
+        System.out.println("====================");
+        System.out.println("=== User Account ===");
+        System.out.println("====================");
+    }
+
+    // zeigt leztes aufrufdatum
+    private void extracted(User user) {
+        LocalDateTime now = LocalDateTime.now();
+        user.setLastViewed(now);
+    }
+
+    // Counter für Activity nutzung
+    private int getResult(User user) {
+        int result = 0;
+        for (Activity a : user.getActivities()) {
+            result += a.getPoints();
+        }
+        return result;
+    }
+} 
+```
 
 ### c) 
 Die *Extract Method* ist hier empfehlenswert um sensible Logik auszulagern und um sich an das SRP zu halten.
