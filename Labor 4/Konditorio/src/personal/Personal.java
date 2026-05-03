@@ -1,3 +1,5 @@
+package personal;
+
 abstract class Personal {
     private String personalnummer;
 

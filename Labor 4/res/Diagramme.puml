@@ -1,0 +1,200 @@
+' Konditoro Konzept
+'________________________
+
+@startuml Konzeptmodell_Konditorio
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide methods
+
+class Konditorio
+
+class Standort
+
+class Filiale {
+  adresse
+  etagennummer
+}
+
+class Kueche
+class Buero
+class Verkaufsraum
+class Kuehlraum
+
+abstract class Personal {
+  personalnummer
+}
+
+class Chef {
+  personalnummer
+}
+
+class Konditor {
+  personalnummer
+}
+
+class Servicekraft {
+  personalnummer
+}
+
+class Konditioreiprodukt
+
+' ── Vererbung ─────────────────────────────────────────────────
+Personal <|-- Chef
+Personal <|-- Konditor
+Personal <|-- Servicekraft
+
+' ── Beziehungen ───────────────────────────────────────────────
+Konditorio  "1"    *--- "1..*"  Standort          : hat
+Standort    "1"    *--- "1..*"  Filiale           : besteht aus
+Standort    "1"    o--- "1"     Chef              : hat
+Standort    "1"    o--- "1"     Konditor          : hat
+Standort    "1"    o--- "3..5"  Servicekraft      : hat
+
+Filiale     "1"    *--- "1"     Kueche            : enthält
+Filiale     "1"    *--- "1"     Buero             : enthält
+Filiale     "1"    *--- "1"     Verkaufsraum      : enthält
+Filiale     "1"    *--- "1"     Kuehlraum         : enthält
+
+Konditor    "1"    --- "1..*"   Konditioreiprodukt : stellt her
+Konditorio  "1"    --- "1..*"   Konditioreiprodukt : verkauft
+
+@enduml
+'________________________
+
+'Stille Post
+'________________________
+@startuml Stille_Post
+
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceParticipantBorderThickness 1
+
+
+participant "Anna"  as A
+participant "Ben"   as B
+participant "Clara" as C
+participant "David" as D
+participant "Eva"   as E
+
+A -> B : flüstert(„Schmetterling")
+activate B
+
+B -> C : flüstert(„Schmetterling")
+activate C
+
+C -> D : flüstert(„Schmetteling")\n<i>minimaler Fehler</i>
+activate D
+
+D -> E : flüstert(„Schmetterding")
+activate E
+
+E -> E : sagt laut: „Schmetterding"
+deactivate E
+deactivate D
+deactivate C
+deactivate B
+
+note over A, E
+  Vergleich:
+  Original „Schmetterling" ≠ Ergebnis „Schmetterding"
+end note
+
+@enduml
+'________________________
+
+'Theaterbesuch
+'________________________
+@startuml Theaterbesuch
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+actor "Studentin" as S
+actor "Freunde" as F
+actor "Kassierer" as K
+
+rectangle "Theaterbesuchs System" {
+
+  ' (a) Grundlegende Use-Cases
+  usecase "Theater besuchen"         as UC_theater
+  usecase "Ticket kaufen"            as UC_ticket
+  usecase "Vorstellung ansehen"      as UC_show
+
+  ' (b) include-Beziehungen
+  usecase "Vorbereitungen durchführen" as UC_prep
+  usecase "Wohnung verlassen"          as UC_leave
+  usecase "Handy einstecken"           as UC_phone
+  usecase "Computer herunterfahren"    as UC_pc
+
+  ' (c) Generalisierung
+  usecase "Alleine besuchen"         as UC_alone
+  usecase "In Gruppe besuchen"       as UC_group
+  usecase "Theaterprogramm lesen"    as UC_program
+
+  ' (d) extend-Beziehungen
+  usecase "Mit E-Bike fahren"        as UC_bike
+  usecase "Batterien prüfen"         as UC_battery
+}
+
+' ── Assoziationen ──────────────────────────────────────────────
+S "1" -- "1"    UC_theater
+S "1" -- "1"    UC_ticket
+S "1" -- "1"    UC_show
+S "1" -- "0..*" UC_prep
+S "1" -- "0..1" UC_bike
+
+F "0..*" -- "1" UC_theater
+
+K "1"    -- "1" UC_ticket
+
+' ── include-Beziehungen ────────────────────────────────────────
+UC_theater  ..> UC_prep   : <<include>>
+UC_prep     ..> UC_leave  : <<include>>
+UC_leave    ..> UC_phone  : <<include>>
+UC_leave    ..> UC_pc     : <<include>>
+
+' ── Generalisierung ───────────────────────────────────────────
+UC_alone  --|> UC_theater
+UC_group  --|> UC_theater
+UC_alone  .> UC_program : <<include>>
+UC_group  .> UC_program : <<include>>
+
+' ── extend-Beziehungen ────────────────────────────────────────
+UC_bike   .> UC_leave   : <<extend>>
+UC_bike   .> UC_battery : <<include>>
+
+@enduml
+
+'________________________
+
+'Konzept Restaurant
+'________________________
+
+@startuml Konzeptmodell_Restaurant
+
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide methods
+
+class Restaurant
+class Tisch
+class Stuhl
+class Bedienhilfe
+class Gast
+class Koch
+class Gericht
+
+Restaurant "1" *--- "5"    Tisch        : besteht aus
+Restaurant "1" *--- "15"   Stuhl        : besteht aus
+Restaurant "1" o--- "3"    Bedienhilfe  : arbeiten in
+Restaurant "1" *--- "1"    Koch         : hat
+
+Tisch       "1" -- "0..4" Gast         : hat Platz
+Stuhl       "0..3" -- "1" Tisch        : steht an
+Bedienhilfe "1"  -- "0..5" Gast        : bewirtet
+Koch        "1"  -- "1..*" Gericht     : kocht
+Gast        "0..*" -- "1" Gericht      : bestellt
+
+@enduml
+'________________________
